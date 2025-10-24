@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router'
 export const useTicketStore = defineStore('ticket', () => {
     const tickets = ref([])
     const currentTicket = ref(null)
+    const loading = ref(false)
     const errors = ref({})
     const errorMessage = ref('')
     const router = useRouter()
@@ -116,5 +117,75 @@ export const useTicketStore = defineStore('ticket', () => {
         }
     }
 
-    return { tickets, currentTicket, errors, errorMessage, fetchTickets, fetchTicket, createTicket, updateTicket, deleteTicket }
+    // Add a comment
+    async function addComment(ticketId, comment) {
+        loading.value = true
+        errors.value = {}
+        errorMessage.value = ''
+        try {
+            await fetchCsrfToken()
+            const res = await axios.post('/api/v1/comments', { ticket_id: ticketId, comment })            
+            currentTicket.value.comments.push(res.data.data)
+            return { success: true, message: res.data.message }
+        } catch (error) {
+            const status = error.response?.status
+            const data = error.response?.data
+            errorMessage.value = data?.message || 'Failed to add comment'
+            errors.value = data?.errors || {}
+            return { success: false, message: errorMessage.value, errors: errors.value }
+        } finally {
+            loading.value = false
+        }
+    }
+
+    // Send a chat message
+    async function sendChat(ticketId, message) {
+        loading.value = true
+        errors.value = {}
+        errorMessage.value = ''
+        try {
+            await fetchCsrfToken()
+            const res = await axios.post('/api/v1/chats', { ticket_id: ticketId, message })
+            currentTicket.value.chats.push(res.data.data)
+            return { success: true, message: res.data.message }
+        } catch (error) {
+            const status = error.response?.status
+            const data = error.response?.data
+            errorMessage.value = data?.message || 'Failed to send chat message'
+            errors.value = data?.errors || {}
+            return { success: false, message: errorMessage.value, errors: errors.value }
+        } finally {
+            loading.value = false
+        }
+    }
+
+    // Subscribe to Pusher channel for real-time chat
+    // function subscribeToChat(ticketId) {
+    //     window.Echo.private(`ticket.${ticketId}`)
+    //         .listen('TicketChatEvent', (e) => {
+    //             currentTicket.value.chats.push(e.chat)
+    //         })
+    // }
+
+    // Unsubscribe from Pusher channel
+    // function unsubscribeFromChat(ticketId) {
+    //     window.Echo.leave(`ticket.${ticketId}`)
+    // }
+
+    return {
+        tickets,
+        currentTicket,
+        loading,
+        errors,
+        errorMessage,
+        fetchTickets,
+        fetchTicket,
+        createTicket,
+        updateTicket,
+        deleteTicket,
+        addComment,
+        sendChat,
+        // subscribeToChat,
+        // unsubscribeFromChat
+    }
 })
