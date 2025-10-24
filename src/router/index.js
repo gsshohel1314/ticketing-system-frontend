@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 import Login from '@/pages/Login.vue'
 import Register from '@/pages/Register.vue'
 import Ticket from '@/pages/Ticket.vue'
@@ -18,8 +19,8 @@ const routes = [
         meta: { requiresGuest: true }
     },
     {
-        path: '/dashboard',
-        name: 'dashboard',
+        path: '/tickets',
+        name: 'tickets',
         component: Ticket,
         meta: { requiresAuth: true }
     },
@@ -34,28 +35,31 @@ const routes = [
 // Create router
 const router = createRouter({
     history: createWebHistory(),
-    routes,
-    scrollBehavior(to, from, savedPosition) {
-        return savedPosition || { top: 0 }
-    }
+    routes
 })
 
-// // Global guard for authentication check
-// router.beforeEach((to, from, next) => {
-//     // Check user is authenticate or not (return true/false)
-//     const isLoggedIn = !!localStorage.getItem('auth-token')
+// Global guard for authentication check
+router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore()
 
-//     // Redirect authenticate user from guest page to protected page
-//     if (to.meta.requiresGuest && isLoggedIn) {
-//         return next({ name: 'dashboard' })
-//     }
+    // Check user is authenticate or not (return true/false)
+    const isLoggedIn = !!authStore.token;
+    
+    // console.log('isLoggedIn', isLoggedIn);
+    // console.log('requiresGuest', to.meta.requiresGuest);
+    // console.log('requiresAuth', to.meta.requiresAuth);
+    
+    // Redirect authenticate page, If user is logged in and requested page is guest page. 
+    if (isLoggedIn == true && to.meta.requiresGuest == true) {
+        return next({ name: 'tickets' })
+    }
 
-//     // Redirect authenticate user from protected page to guest page
-//     if (to.meta.requiresAuth && !isLoggedIn) {
-//         return next({ name: 'login' })
-//     }
+    // Redirect guest page, If user is not logged in and requested page is authenticate page. 
+    if (isLoggedIn == false && to.meta.requiresAuth == true) {
+        return next({ name: 'login' })
+    }
 
-//     next()
-// })
+    next()
+})
 
 export default router

@@ -1,4 +1,18 @@
-<script setup></script>
+<script setup>
+import { ref } from 'vue'
+import { useAuthStore } from '../stores/auth'
+
+const authStore = useAuthStore()
+const errorMessage = ref('')
+
+async function handleLogout() {
+  errorMessage.value = ''
+  const result = await authStore.logout()
+  if (!result.success) {
+    errorMessage.value = result.message
+  }
+}
+</script>
 
 <template>
   <nav class="bg-green-700 border-b border-green-500">
@@ -14,11 +28,12 @@
           </a>
           <div class="md:ml-auto">
             <div class="flex space-x-2">
-              <a
-                href="jobs.html"
+              <button
+                @click="handleLogout"
                 class="text-white hover:bg-green-800 hover:text-white rounded-md px-3 py-2"
-                >Logout</a
               >
+                Logout
+              </button>
             </div>
           </div>
         </div>
