@@ -3,6 +3,10 @@ import { useAuthStore } from '@/stores/auth'
 import Login from '@/pages/Login.vue'
 import Register from '@/pages/Register.vue'
 import Ticket from '@/pages/Ticket.vue'
+import TicketList from '@/pages/TicketList.vue'
+import TicketEdit from '@/pages/TicketForm.vue'
+import TicketCreate from '@/pages/TicketForm.vue'
+import TicketShow from '@/pages/TicketView.vue'
 import NotFound from '@/pages/NotFound.vue'
 
 const routes = [
@@ -18,10 +22,34 @@ const routes = [
         component: Register,
         meta: { requiresGuest: true }
     },
+    // {
+    //     path: '/tickets',
+    //     name: 'tickets',
+    //     component: Ticket,
+    //     meta: { requiresAuth: true }
+    // },
     {
         path: '/tickets',
         name: 'tickets',
-        component: Ticket,
+        component: TicketList,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/tickets/create',
+        name: 'ticket-create',
+        component: TicketCreate,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/tickets/:id/edit',
+        name: 'ticket-edit',
+        component: TicketEdit,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/tickets/:id/show',
+        name: 'ticket-show',
+        component: TicketShow,
         meta: { requiresAuth: true }
     },
     // 404 page (put it last)
