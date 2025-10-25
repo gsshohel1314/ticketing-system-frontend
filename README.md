@@ -1,38 +1,48 @@
-# ticketing-system-frontend
+# Customer Support Ticketing System - Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+This is the frontend for a Customer Support Ticketing System built with **Vue.js 3**. It provides a responsive UI for user authentication, ticket management, commenting, and real-time chat linked to tickets. The frontend communicates with a Laravel backend API and uses Pusher for real-time chat.
 
-## Recommended IDE Setup
+## Features
+- **Authentication**: Login, registration, and logout with role-based access (Admin/Customer).
+- **Tickets**: Create, view, update, delete tickets with form validation.
+- **Comments**: Add and view comments under tickets.
+- **Real-Time Chat**: Customer ↔ Admin chat linked to tickets using Pusher.
+- **Responsive UI**: Built with Tailwindcss for desktop compatibility.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Prerequisites
+- Node.js - Updated node version like, v22.17.1
+- npm
+- Pusher JS (for real-time chat)
+- Backend API (deployed or running locally at `http://localhost:8000`)
+- Git
 
-## Recommended Browser Setup
+## Installation
+1. **Clone the Repository**:
+    ```bash
+    HTTPS: git clone https://github.com/gsshohel1314/ticketing-system-frontend.git
+    SSH: git clone git@github.com:gsshohel1314/ticketing-system-frontend.git
+    cd ticketing-system-frontend
+2. **Install Dependencies**:
+    ```bash
+    npm install
+3. **Environment Setup (Create .env file in the root)**:
+    ```bash
+    VITE_API_BASE_URL=http://localhost:8000
+    VITE_PUSHER_APP_KEY=your_pusher_key
+    VITE_PUSHER_APP_CLUSTER=your_pusher_cluster
+4. **Run Development Server**:
+    ```bash
+    npm run dev
+    ```
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+## Real-Time Chat
+- **Technology**: Uses Laravel Echo and Pusher JS for real-time messaging.
+- **Setup**: Configured in src/main.js with Echo and Pusher.
+- **Channel**: Listens to ticket.{ticket_id} for real-time message updates.
+- **Usage**: In TicketView.vue, users can send/receive messages linked to a ticket.
 
-## Customize configuration
+## API Integration
+- **Axios**: Used for API calls to the backend.
+- **Auth**: Stores token in localStorage and adds Authorization: Bearer token to protected requests.
+- **Endpoints**: Connects to backend routes (see backend README for details).
 
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
