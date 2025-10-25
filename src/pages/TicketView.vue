@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useTicketStore } from '../stores/ticket'
 import { useRoute, RouterLink } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
@@ -10,15 +10,26 @@ const route = useRoute()
 const activeTab = ref('comments')
 const newComment = ref('')
 const newChat = ref('')
+const chatContainer = ref(null)
 
 onMounted(async () => {
   await ticketStore.fetchTicket(route.params.id)
-//   ticketStore.subscribeToChat(route.params.id)
+  ticketStore.subscribeToChat(route.params.id)
 })
 
-// onUnmounted(() => {
-//   ticketStore.unsubscribeFromChat(route.params.id)
-// })
+onUnmounted(() => {
+  ticketStore.unsubscribeFromChat(route.params.id)
+})
+
+watch(
+  () => ticketStore.currentTicket?.chats,
+  () => {
+    if (chatContainer.value) {
+      chatContainer.value.scrollTop = chatContainer.value.scrollHeight
+    }
+  },
+  { deep: true }
+)
 
 async function handleAddComment() {
   if (newComment.value.trim()) {
@@ -154,7 +165,7 @@ async function handleSendChat() {
           <!-- Chat Section -->
           <div v-if="activeTab === 'chat'" class="mt-4">
             <h3 class="text-lg font-medium text-gray-900">Chat</h3>
-            <div class="h-64 overflow-y-auto border border-gray-300 rounded-md p-4">
+            <div ref="chatContainer" class="h-64 overflow-y-auto border border-gray-300 rounded-md p-4">
               <div v-if="ticketStore.currentTicket.chats?.length" class="space-y-4">
                 <div v-for="chat in ticketStore.currentTicket.chats" :key="chat.id" :class="['flex', chat.sender.id === authStore.user?.id ? 'justify-end' : 'justify-start']">
                   <div :class="['max-w-xs p-3 rounded-lg', chat.sender.id === authStore.user?.id ? 'bg-indigo-100 text-indigo-900' : 'bg-gray-100 text-gray-900']">

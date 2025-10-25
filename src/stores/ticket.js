@@ -160,17 +160,30 @@ export const useTicketStore = defineStore('ticket', () => {
     }
 
     // Subscribe to Pusher channel for real-time chat
-    // function subscribeToChat(ticketId) {
-    //     window.Echo.private(`ticket.${ticketId}`)
-    //         .listen('TicketChatEvent', (e) => {
-    //             currentTicket.value.chats.push(e.chat)
-    //         })
-    // }
+    function subscribeToChat(ticketId) {
+        // Subscribe to public channel
+        // window.Echo.channel('chat-channel')
+        //     .listen('MessageSent', (e) => {
+        //         // console.log("Log data: ", e)            
+        //         currentTicket.value.chats.push(e.chat)
+        //     })
+
+        // Subscribe to private channel
+        window.Echo.private(`ticket.${ticketId}`)
+            .listen('MessageSent', (e) => {
+                // console.log("Log data: ", e)
+                currentTicket.value.chats.push(e.chat)
+            });
+    }
 
     // Unsubscribe from Pusher channel
-    // function unsubscribeFromChat(ticketId) {
-    //     window.Echo.leave(`ticket.${ticketId}`)
-    // }
+    function unsubscribeFromChat(ticketId) {
+        // Unsubscribe public channel
+        // window.Echo.leave('chat-channel')
+
+        // Unsubscribe private channel
+        window.Echo.leave(`ticket.${ticketId}`)
+    }
 
     return {
         tickets,
@@ -185,7 +198,7 @@ export const useTicketStore = defineStore('ticket', () => {
         deleteTicket,
         addComment,
         sendChat,
-        // subscribeToChat,
-        // unsubscribeFromChat
+        subscribeToChat,
+        unsubscribeFromChat
     }
 })

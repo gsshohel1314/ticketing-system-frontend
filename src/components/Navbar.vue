@@ -27,7 +27,12 @@ async function handleLogout() {
             >
           </a>
           <div class="md:ml-auto">
-            <div class="flex space-x-2">
+            <div class="flex space-x-2 items-center">
+              <div v-if="authStore.user" class="text-white">
+                <span>{{ authStore.user.name }}</span>
+                <span class="ml-2">({{ authStore.user.role }})</span>
+              </div>
+
               <button
                 @click="handleLogout"
                 class="text-white hover:bg-green-800 hover:text-white rounded-md px-3 py-2"
